@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  mysql:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: mysql_container
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: exampledb
+      MYSQL_USER: user
+      MYSQL_PASSWORD: userpassword
+      TZ: UTC
+    command:
+      --server-id=1
+      --log-bin=/var/log/mysql/mysql-bin
+      --binlog-format=ROW
+      --expire_logs_days=7
+    volumes:
+      - mysql_data:/var/lib/mysql       # MySQL data storage
+      - ./backups:/var/backups          # Backup storage
+      - ./logs:/var/log/mysql           # Binary log storage
+      - ./scripts:/usr/local/bin        # Scripts volume
+    ports:
+      - "3306:3306"
+
+volumes:
+  mysql_data:
